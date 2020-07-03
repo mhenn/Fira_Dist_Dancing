@@ -38,7 +38,7 @@ btnJoinBroadcaster.onclick = function () {
 };
 
 
-
+btnpose.onclick = async function(){estimate(await net)}
 
 /////////////////////////CLIENT
 
@@ -54,54 +54,65 @@ btnupdate.onclick = function() {
 };
 
 
-
-
-function addCanvas(){
+function addCanvas(name){
 
 	let canvas = document.createElement("Canvas");
 	canvas.width = w;
 	canvas.height = h;	
-	canvas.id = "localCanvas";
+	canvas.id = name;
 	divConsultingRoom.appendChild(canvas);
-	
-	can = document.getElementById('localCanvas');
 }
 
-
-btnJoinViewer.onclick = function () {
-  if (inputRoomNumber.value === "" || inputName.value === "") {
-    alert("Please type a room number and a name");
-  } else {
-    user = {
-      room: inputRoomNumber.value,
-      name: inputName.value,
-    };
-    divSelectRoom.style = "display: none;";
-    divConsultingRoom.style = "display: block;";
-
-    socket.emit("register as viewer", user);
-	
-	videoElement.style = "display: none;"
+function addVideo(name){
 	let lvideo = document.createElement("video");
 	lvideo.autoplay = true;
 	lvideo.width = w;
 	lvideo.height = h;
 	lvideo.id = "localVideo";
 	divConsultingRoom.appendChild(lvideo);
+}
 
-	addCanvas();
+btnJoinViewer.onclick = function () {
+   
+   if (inputRoomNumber.value === "" || inputName.value === "") {
+    alert("Please type a room number and a name");
+   } else {
+    user = {
+      room: inputRoomNumber.value,
+      name: inputName.value,
+   };
 
-    navigator.mediaDevices
-      .getUserMedia(streamConstraints)
-      .then(function (stream) {
-        lvideo.srcObject = stream;
-      })
-      .catch(function (err) {
-        console.log("An error ocurred when accessing media devices", err);
-      });
+   divSelectRoom.style = "display: none;";
+   divConsultingRoom.style = "display: block;";
+
+   socket.emit("register as viewer", user);
+	
+	videoElement.style = "display: none;"
+	addVideo('localVideo')
+ 	addCanvas('localCanvas');
+
+	navigator.mediaDevices
+		.getUserMedia(streamConstraints)
+		.then(function (stream) {
+			lvideo.srcObject = stream;
+		})
+	.catch(function (err) {
+	  console.log("An error ocurred when accessing media devices", err);
+	});
 
   }
 };
+
+
+btnpose.onclick = async function(){ 
+
+	addCanvas('blah')
+	blah = document.getElementById('blah')
+	blah.style = 'display: none;'	
+	drawVideoToCanvas(videoElement, blah)
+
+	socket.emit("get_update", getSkeleton(blah, await net))
+}
 
 // message handlers
 socket.on("new viewer", function (viewer) {

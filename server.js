@@ -53,6 +53,11 @@ io.on("connection", function (socket) {
 	socket.on("update_image", function(user, imgBlob) {
 		socket.to(broadcasters[user.room]).emit("update_image", user, imgBlob)
 	});
+
+	socket.on("get_update", function(pose){
+	   console.log(pose)
+	});
+
 });
 
 

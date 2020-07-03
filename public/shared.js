@@ -106,9 +106,14 @@ async function getSkeleton(img, net){
 	return poses	
 }
 
+function drawVideoToCanvas(video, canvas){
+	const ctx = canvas.getContext('2d')
+
+	ctx.drawImage(video, 0,0,w,h)
+
+}
 
 function drawSkeletonOnCanvas(canvas, poses){
-
 	
 	const ctx = canvas.getContext('2d')
 	ctx.drawImage(video, 0,0, w,h)
@@ -118,14 +123,13 @@ function drawSkeletonOnCanvas(canvas, poses){
 	return initial
 }
  
-async function estimate(net) {
+async function estimate(net, external_pose) {
 	var flipHorizontal = false;
 	let video = document.getElementById('localVideo');
 	let canvas = document.getElementById('localCanvas')
 	poses = await getSkeleton(video, net)
 
-	let initial = drawSkeletonOnCanvas(canvas,poses) 
-	
+	let initial = drawSkeletonOnCanvas(canvas,poses) 	
 	
 	let available_combs = new Map()	
 
@@ -133,9 +137,8 @@ async function estimate(net) {
 		p1 = poses.keypoints[a]
 		p2 = poses.keypoints[b]
 
-		cp1 = poses.keypoints[a]
-		cp2 = poses.keypoints[b]
-
+		cp1 = external.keypoints[a]
+		cp2 = external.keypoints[b]
 
 		if (connection_exists(p1,p2)){
 			if(connection_exists(cp1,cp2)){
@@ -146,13 +149,10 @@ async function estimate(net) {
 		}
 	});
 
-
 	return score
-
 //	let res = drawCutout(initial)	
 //	res.delete()
 	
-	//estimate(net)
 }
 
 
@@ -175,7 +175,7 @@ function drawCutout(initial){
 }
 	
 
-btnpose.onclick = async function(){estimate(await net)};
+//btnpose.onclick = async function(){estimate(await net)};
 
 
 function getAngle(p1,p2) {
