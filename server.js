@@ -12,6 +12,8 @@ let viewers = {};
 // express routing
 app.use(express.static("public"));
 
+users = []
+
 // signaling
 io.on("connection", function (socket) {
   console.log("a user connected");
@@ -29,7 +31,7 @@ io.on("connection", function (socket) {
       
     socket.join(user.room);
     user.id = socket.id;
-
+	 users.push(user.id)
     socket.to(broadcasters[user.room]).emit("new viewer", user);
   });
 
@@ -54,8 +56,14 @@ io.on("connection", function (socket) {
 		socket.to(broadcasters[user.room]).emit("update_image", user, imgBlob)
 	});
 
-	socket.on("get_update", function(pose){
-	   console.log(pose)
+	socket.on("update_user_data", function(user){
+		socket.to(broadcasters[user.room]).emit("update_user", user)
+	})
+
+	socket.on("get_update", function(pose, user){
+		users.forEach((id) => {
+	   	socket.to(id).emit("get_update", pose)
+		})
 	});
 
 });

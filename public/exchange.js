@@ -1,5 +1,4 @@
 
-
 /////////////////////////SHARED
 
 btncapture.onclick = function(){
@@ -26,7 +25,7 @@ btnJoinBroadcaster.onclick = function () {
       name: inputName.value,
 		score: 0,
     };
-
+	 bUser = user
     divSelectRoom.style = "display: none;";
     divConsultingRoom.style = "display: block;";
 	 console.log(user.name + " is broadcasting")
@@ -38,7 +37,7 @@ btnJoinBroadcaster.onclick = function () {
 };
 
 
-btnpose.onclick = async function(){estimate(await net)}
+//btnpose.onclick = async function(){estimate(await net)}
 
 /////////////////////////CLIENT
 
@@ -68,8 +67,9 @@ function addVideo(name){
 	lvideo.autoplay = true;
 	lvideo.width = w;
 	lvideo.height = h;
-	lvideo.id = "localVideo";
+	lvideo.id = name;
 	divConsultingRoom.appendChild(lvideo);
+	return document.getElementById(name)
 }
 
 btnJoinViewer.onclick = function () {
@@ -88,7 +88,7 @@ btnJoinViewer.onclick = function () {
    socket.emit("register as viewer", user);
 	
 	videoElement.style = "display: none;"
-	addVideo('localVideo')
+	let lvideo = addVideo('localVideo')
  	addCanvas('localCanvas');
 
 	navigator.mediaDevices
@@ -105,14 +105,18 @@ btnJoinViewer.onclick = function () {
 
 
 btnpose.onclick = async function(){ 
-
+	console.log()
 	addCanvas('blah')
 	blah = document.getElementById('blah')
 	blah.style = 'display: none;'	
 	drawVideoToCanvas(videoElement, blah)
+	let skel = getSkeleton(document.getElementById('blah'), await net)
+	console.log(await skel)
 
-	socket.emit("get_update", getSkeleton(blah, await net))
+	socket.emit("get_update", await skel, user)
 }
+
+let meself = null
 
 // message handlers
 socket.on("new viewer", function (viewer) {
@@ -140,8 +144,10 @@ socket.on("new viewer", function (viewer) {
         id: event.candidate.sdpMid,
         candidate: event.candidate.candidate,
       });
+		console.log()
     }
   };
+	
 
   rtcPeerConnections[viewer.id]
     .createOffer()
@@ -165,12 +171,20 @@ socket.on("candidate", function (id, event) {
     sdpMLineIndex: event.label,
     candidate: event.candidate,
   });
-  rtcPeerConnections[id].addIceCandidate(candidate);
+   rtcPeerConnections[id].addIceCandidate(candidate);
 });
 
-socket.on("offer", function (broadcaster, sdp) {
-  broadcasterName.innerText = broadcaster.name + "is broadcasting...";
+channels = []
 
+function receivedData(event){
+	console.log(event)
+
+}
+
+socket.on("offer", function (broadcaster, sdp) {
+
+  broadcasterName.innerText = broadcaster.name + "is broadcasting...";
+  
   rtcPeerConnections[broadcaster.id] = new RTCPeerConnection(iceServers);
 
   rtcPeerConnections[broadcaster.id].setRemoteDescription(sdp);
@@ -219,7 +233,30 @@ socket.on("update_image", function(user, imgBlob){
       newImg.src = imgBlob;
       document.body.appendChild(newImg);	
 	   //can.getContext('2d').drawImage(imgBlob, 0, 0, w, h);  
-
 });
 
+socket.on("get_update", function(pose){
+	estimate(pose )
+});
 
+socket.on("update_user", function(user){
+		//var newImg = document.createElement("img"); // create img tag
+		//name = 'canvas' + Math.floor(Math.random() * 10); 
+		//newImg.id = name 
+		//newImg.src = user.img
+		//document.body.appendChild(newImg);
+	addCanvas('test')
+	var ctx = document.getElementById('test').getContext('2d')
+	var im = new Image
+	im.onload = function(){
+   	ctx.drawImage(user.img,0,0,w,h)
+	}
+	
+	user_list.push(user)
+	im.src = user.img
+//	var myCanvas = document.getElementById('test');
+//	var ctx = myCanvas.getContext('2d');
+//	var img = new Image();
+//	img.src = user.img 
+//	ctx.drawImage(img, 0,0, w, h);
+});

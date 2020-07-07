@@ -7,6 +7,9 @@ const lineWidth = 80;
 const detect_thresh = 0.5
 // constants
 
+var user_list = []
+
+
 const iceServers = {
   iceServers: [
     { urls: "stun:stun.services.mozilla.com" },
@@ -15,6 +18,8 @@ const iceServers = {
 };
 
 const streamConstraints = { audio: true, video: { height: 480 } };
+
+
 
 
 
@@ -43,14 +48,12 @@ function getImageObject(x,y,image){
 
 }
 
-function drawPyramid(){
+function drawPyramid(pics){
 	var canvas = document.getElementById('localCanvas');     
-	var video = document.getElementById('localVideo');
-	canvas.width = video.videoWidth;
-	canvas.height = video.videoHeight;
+	canvas.width = w
+	canvas.height = h 
 	
-	
-	
+		
 	let nextLine = 1;
 	let middle = w/2;
 	[imW, imH] = [w/4, h/4]
@@ -58,12 +61,12 @@ function drawPyramid(){
    var increase = fibonacci(15);	
 	var images = []
 
-	for( var i = 0; i < 11; i++ ){	
+	for( var i = 0; i < pics.length + 1; i++ ){	
 		
 		if(i == 0)
 			images.push(getImageObject(x,y, videoElement))
 		else
-			images.push(getImageObject(x,y, video))
+			images.push(getImageObject(x,y, pics[i-1]))
 		
 			x += imW + 10;
 			
@@ -78,8 +81,7 @@ function drawPyramid(){
 	var ctx = canvas.getContext('2d')
 	for (var i = (images.length -1) ; i >= 0 ; i--){ 
 		img = images[i]
-		ctx.drawImage(img.src, img.pos[0], img.pos[1], imW, imH)
-		
+		ctx.drawImage(img.src, img.pos[0], img.pos[1], imW, imH)	
 	};
 		
 	ctx = canvas.getContext('2d');	

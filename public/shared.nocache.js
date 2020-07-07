@@ -15,6 +15,8 @@ const btnpose = document.getElementById("pose");
 const w = 640;
 const h = 480;
 
+var list 
+
 
 const combinations = new Map([["shoulders",[5,6]],["left_arm",[5,7]],["right_arm",[6,8]],["left_forearm",[7,9]],["right_forearm",[8,10]],["hip",[11,12]],["left_u_leg", [11,13]],["right_u_leg",[12,14]],["left_l_leg",[13,15]],["right_l_leg",[14,16]]])
 
@@ -49,7 +51,7 @@ function drawSegment([ay, ax], [by, bx], color, scale, ctx) {
 }
 
 function drawSkeleton(keypoints, minConfidence, ctx, scale = 1) {
-  const adjacentKeyPoints =
+  let adjacentKeyPoints =
       posenet.getAdjacentKeyPoints(keypoints, minConfidence);
 
   adjacentKeyPoints.forEach((keypoints) => {
@@ -61,12 +63,12 @@ function drawSkeleton(keypoints, minConfidence, ctx, scale = 1) {
 
 function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
   for (let i = 0; i < keypoints.length; i++) {
-    const keypoint = keypoints[i];
+    let keypoint = keypoints[i];
     if (keypoint.score < minConfidence) {
       continue;
     }
 
-    const {y, x} = keypoint.position;
+    let {y, x} = keypoint.position;
 	 if(keypoint.part == "nose")
    	 drawPoint(ctx, y * scale, x * scale, 100, color);
 	 else
@@ -76,7 +78,7 @@ function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
 
 
 async function getNet(){
-	let net = await   posenet.load({
+	let net = await posenet.load({
 	  architecture: 'MobileNetV1',
 	  outputStride: 16,
 	  inputResolution: { width: 640, height: 480 },
@@ -86,7 +88,7 @@ async function getNet(){
 	return  net
 }
 
-const net = getNet()
+let net = getNet()
 
 
 function connection_exists(p1,p2){
@@ -100,22 +102,19 @@ function connection_exists(p1,p2){
 
 async function getSkeleton(img, net){
 
-	const poses = await net.estimateSinglePose(img, {
+	var poses = await net.estimateSinglePose(img, {
 		  decodingMethod: "single-person"
 		});
 	return poses	
 }
 
 function drawVideoToCanvas(video, canvas){
-	const ctx = canvas.getContext('2d')
-
-	ctx.drawImage(video, 0,0,w,h)
-
+	canvas.getContext('2d').drawImage(video, 0,0,w,h)
 }
 
-function drawSkeletonOnCanvas(canvas, poses){
-	
-	const ctx = canvas.getContext('2d')
+function drawSkeletonOnCanvas(canvas, video, poses){
+	//canvas.style = 'display: none;'
+	var ctx = canvas.getContext('2d')
 	ctx.drawImage(video, 0,0, w,h)
 	let initial = cv.imread('localCanvas')
 	drawKeypoints(poses.keypoints, detect_thresh, ctx);
@@ -123,36 +122,46 @@ function drawSkeletonOnCanvas(canvas, poses){
 	return initial
 }
  
-async function estimate(net, external_pose) {
+async function estimate( external_pose) {
+	net = await net	
 	var flipHorizontal = false;
 	let video = document.getElementById('localVideo');
 	let canvas = document.getElementById('localCanvas')
 	poses = await getSkeleton(video, net)
 
-	let initial = drawSkeletonOnCanvas(canvas,poses) 	
+	let initial = drawSkeletonOnCanvas(canvas, video,poses) 	
 	
-	let available_combs = new Map()	
-
+	let score = 0
 	combinations.forEach(([a,b], key) => {
 		p1 = poses.keypoints[a]
 		p2 = poses.keypoints[b]
 
-		cp1 = external.keypoints[a]
-		cp2 = external.keypoints[b]
+		cp1 = external_pose.keypoints[a]
+		cp2 = external_pose.keypoints[b]
 
 		if (connection_exists(p1,p2)){
 			if(connection_exists(cp1,cp2)){
-				let angle =  getAngle(p1.position, p2.position)
-				available_combs.set(key, angle)
-				console.log(available_combs.get(key))
+				let angle = getAngle(p1.position, p2.position)
+				let external_angle =  getAngle(cp1.position, cp2.position)
+				score += 90 - Math.abs(angle - external_angle) 
 			}
 		}
 	});
-
-	return score
-//	let res = drawCutout(initial)	
-//	res.delete()
+	console.log(score)
+	drawCutout(initial)	
 	
+	if(!user.score)
+		user.score = 0
+	user.score = user.score + (score / 100)	
+	
+	let img = document.getElementById('localCanvas')
+	let url = img.toDataURL();
+	var im = new Image
+	im.src = url 
+	console.log(im)
+	user.img = im
+	socket.emit("update_user_data", user)	
+	//res.delete()
 }
 
 
@@ -165,12 +174,13 @@ function drawCutout(initial){
 	low = new cv.Mat(src.rows, src.cols, src.type(), [237,0,254,0])
 	high = new cv.Mat(src.rows, src.cols, src.type(), [250,0,265,260])
 	cv.inRange(src,low, high, dst)
-	
 	cv.bitwise_and( initial,initial, res, dst )
+	console.log(res)	
 	cv.imshow('localCanvas', res)
 	initial.delete()
 	src.delete()
 	dst.delete()
+	res.delete()
 	return res	
 }
 	
