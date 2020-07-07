@@ -104,15 +104,16 @@ btnJoinViewer.onclick = function () {
 };
 
 
-btnpose.onclick = async function(){ 
-	console.log()
-	addCanvas('blah')
-	blah = document.getElementById('blah')
-	blah.style = 'display: none;'	
-	drawVideoToCanvas(videoElement, blah)
-	let skel = getSkeleton(document.getElementById('blah'), await net)
-	console.log(await skel)
+btnpose.onclick = async function(){
+	let name = 'skel' 
+	if(!document.getElementById(name)){
+		addCanvas(name)
+		blah = document.getElementById(name)
+		blah.style = 'display: none;'	
+	}
 
+	drawVideoToCanvas(videoElement, blah)
+	let skel = getSkeleton(document.getElementById(name), await net)
 	socket.emit("get_update", await skel, user)
 }
 
@@ -239,24 +240,28 @@ socket.on("get_update", function(pose){
 	estimate(pose )
 });
 
-socket.on("update_user", function(user){
-		//var newImg = document.createElement("img"); // create img tag
-		//name = 'canvas' + Math.floor(Math.random() * 10); 
-		//newImg.id = name 
-		//newImg.src = user.img
-		//document.body.appendChild(newImg);
-	addCanvas('test')
-	var ctx = document.getElementById('test').getContext('2d')
-	var im = new Image
-	im.onload = function(){
-   	ctx.drawImage(user.img,0,0,w,h)
-	}
+
+function addImg(name, img){
+	var newImg = document.createElement('img')
+	name = name;                  
+	newImg.id = name 
+	newImg.src = img             
+	document.body.appendChild(newImg);
+}
+
+socket.on("update_user", function(usr){
+	let im = document.getElementById(usr.name)
 	
-	user_list.push(user)
-	im.src = user.img
-//	var myCanvas = document.getElementById('test');
-//	var ctx = myCanvas.getContext('2d');
-//	var img = new Image();
-//	img.src = user.img 
-//	ctx.drawImage(img, 0,0, w, h);
+	if(!im)
+		addImg(usr.name,usr.img)
+	else
+		im.src = usr.img
+
+	usr.src = document.getElementById(usr.name)
+	user_list = user_list.filter(e => (e.name != usr.name))
+	user_list.push(usr)
+	user_list = user_list.sort((a,b) => ( a.score > b.score) ? 1 : -1)
+
+	drawPyramid()	
+
 });

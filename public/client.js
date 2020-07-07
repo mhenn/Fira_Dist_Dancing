@@ -48,7 +48,18 @@ function getImageObject(x,y,image){
 
 }
 
-function drawPyramid(pics){
+function getImages(){
+
+	l = []
+	user_list.forEach((obj) =>{
+		l.push(obj.src)
+	})
+	return l
+}
+
+function drawPyramid(){
+
+	let image_list = getImages() 
 	var canvas = document.getElementById('localCanvas');     
 	canvas.width = w
 	canvas.height = h 
@@ -61,12 +72,12 @@ function drawPyramid(pics){
    var increase = fibonacci(15);	
 	var images = []
 
-	for( var i = 0; i < pics.length + 1; i++ ){	
+	for( var i = 0; i < image_list.length + 1; i++ ){	
 		
 		if(i == 0)
 			images.push(getImageObject(x,y, videoElement))
 		else
-			images.push(getImageObject(x,y, pics[i-1]))
+			images.push(getImageObject(x,y, image_list[i-1]))
 		
 			x += imW + 10;
 			

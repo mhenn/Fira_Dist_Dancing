@@ -156,10 +156,7 @@ async function estimate( external_pose) {
 	
 	let img = document.getElementById('localCanvas')
 	let url = img.toDataURL();
-	var im = new Image
-	im.src = url 
-	console.log(im)
-	user.img = im
+	user.img = url
 	socket.emit("update_user_data", user)	
 	//res.delete()
 }
@@ -202,5 +199,3 @@ function getAngle(p1,p2) {
 
 
 ///////////////////////////////////////END POSENET
-
-
