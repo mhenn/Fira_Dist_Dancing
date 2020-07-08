@@ -7,13 +7,18 @@ const btnJoinViewer = document.getElementById("joinViewer");
 const videoElement = document.querySelector("video");
 const broadcasterName = document.getElementById("broadcasterName");
 const viewers = document.getElementById("viewers");
-const btnupdate = document.getElementById("update");
-const btncapture = document.getElementById("capture");
-const btndraw = document.getElementById("draw");
 const btnpose = document.getElementById("pose");
 
-const w = 640;
-const h = 480;
+const video_w = 640;
+const video_h = 480;
+
+const w = video_w;
+const h = video_h;
+
+
+const videoCanvas = 'videoCanvas' 
+const imageCanvas = 'imageCanvas'
+const pyramidCanvas = 'pyramidCanvas'	
 
 var list 
 
@@ -22,6 +27,32 @@ const combinations = new Map([["shoulders",[5,6]],["left_arm",[5,7]],["right_arm
 
 
 var socket = io();
+
+function addCanvas(name){
+	let canvas = document.createElement("Canvas");
+	canvas.width = w;
+	canvas.height = h;	
+	canvas.id = name;
+	divConsultingRoom.appendChild(canvas);
+}
+
+function addVideo(name){
+	let lvideo = document.createElement("video");
+	lvideo.autoplay = true;
+	lvideo.width = video_w;
+	lvideo.height = video_h;
+	lvideo.id = name;
+	divConsultingRoom.appendChild(lvideo);
+	return document.getElementById(name)
+}
+
+function addImg(name, img){
+	var newImg = document.createElement('img')
+	name = name;                  
+	newImg.id = name 
+	newImg.src = img             
+	document.body.appendChild(newImg);
+}
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -116,7 +147,7 @@ function drawSkeletonOnCanvas(canvas, video, poses){
 	//canvas.style = 'display: none;'
 	var ctx = canvas.getContext('2d')
 	ctx.drawImage(video, 0,0, w,h)
-	let initial = cv.imread('localCanvas')
+	var initial = cv.imread(imageCanvas)
 	drawKeypoints(poses.keypoints, detect_thresh, ctx);
 	drawSkeleton(poses.keypoints, detect_thresh, ctx);
 	return initial
@@ -125,8 +156,8 @@ function drawSkeletonOnCanvas(canvas, video, poses){
 async function estimate( external_pose) {
 	net = await net	
 	var flipHorizontal = false;
-	let video = document.getElementById('localVideo');
-	let canvas = document.getElementById('localCanvas')
+	var video = document.getElementById(videoCanvas);
+	var canvas = document.getElementById(imageCanvas)
 	poses = await getSkeleton(video, net)
 
 	let initial = drawSkeletonOnCanvas(canvas, video,poses) 	
@@ -147,38 +178,32 @@ async function estimate( external_pose) {
 			}
 		}
 	});
-	console.log(score)
 	drawCutout(initial)	
 	
 	if(!user.score)
 		user.score = 0
 	user.score = user.score + (score / 100)	
 	
-	let img = document.getElementById('localCanvas')
+	let img = document.getElementById(imageCanvas)
 	let url = img.toDataURL();
 	user.img = url
 	socket.emit("update_user_data", user)	
-	//res.delete()
 }
 
 
 function drawCutout(initial){
-	
-	let src = cv.imread('localCanvas')
+	let src = cv.imread(imageCanvas)
 	let dst = new cv.Mat()
-	let res = new cv.Mat()
-
+	var res = new cv.Mat()
 	low = new cv.Mat(src.rows, src.cols, src.type(), [237,0,254,0])
 	high = new cv.Mat(src.rows, src.cols, src.type(), [250,0,265,260])
 	cv.inRange(src,low, high, dst)
 	cv.bitwise_and( initial,initial, res, dst )
-	console.log(res)	
-	cv.imshow('localCanvas', res)
+	cv.imshow(imageCanvas, res)
 	initial.delete()
 	src.delete()
 	dst.delete()
 	res.delete()
-	return res	
 }
 	
 
@@ -197,5 +222,7 @@ function getAngle(p1,p2) {
     return Math.round((Math.asin(y / z) / Math.PI) * 180); 
 }
 
-
 ///////////////////////////////////////END POSENET
+
+addCanvas(imageCanvas)
+

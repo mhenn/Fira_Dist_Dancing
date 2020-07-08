@@ -20,9 +20,6 @@ const iceServers = {
 const streamConstraints = { audio: true, video: { height: 480 } };
 
 
-
-
-
 function fibonacci(num) {
 	
 	var [a,b, c] = [0,1,0]
@@ -35,13 +32,6 @@ function fibonacci(num) {
 	}
 	return list
 }
-btndraw.onclick = async function() {
-
-	while (true){
-		drawPyramid()
-		await sleep(1000/15)
-	}
-};
 
 function getImageObject(x,y,image){
 	return { pos:[x,y], src:image}
@@ -49,7 +39,6 @@ function getImageObject(x,y,image){
 }
 
 function getImages(){
-
 	l = []
 	user_list.forEach((obj) =>{
 		l.push(obj.src)
@@ -57,14 +46,22 @@ function getImages(){
 	return l
 }
 
-function drawPyramid(){
 
-	let image_list = getImages() 
-	var canvas = document.getElementById('localCanvas');     
+function videoToCanvasPyramid(){
+
+	let canvas = document.getElementById(imageCanvas)			
+
+	var ctx = canvas.getContext('2d')
+	ctx.drawImage(videoElement, (w/2 - w/8, 0, w/h,h/2))	
+}
+
+function drawPyramid(client){
+
+	let image_list = getImages()
+	var canvas = document.getElementById(imageCanvas);     
 	canvas.width = w
 	canvas.height = h 
 	
-		
 	let nextLine = 1;
 	let middle = w/2;
 	[imW, imH] = [w/4, h/4]
@@ -72,12 +69,12 @@ function drawPyramid(){
    var increase = fibonacci(15);	
 	var images = []
 
-	for( var i = 0; i < image_list.length + 1; i++ ){	
+	for( var i = 0; i < image_list.length ; i++ ){	
 		
-		if(i == 0)
+		if(false)
 			images.push(getImageObject(x,y, videoElement))
 		else
-			images.push(getImageObject(x,y, image_list[i-1]))
+			images.push(getImageObject(x,y, image_list[i]))
 		
 			x += imW + 10;
 			
@@ -98,8 +95,8 @@ function drawPyramid(){
 	ctx = canvas.getContext('2d');	
 
 	ctx.globalCompositeOperation = 'destination-over'
-	ctx.fillStyle = "black";
-	ctx.fillRect(0, 0, w, h);
+	//ctx.fillStyle = "black";
+	//ctx.clearRect(0, 0, w, h);
 	
 };
 

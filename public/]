@@ -24,20 +24,16 @@ btnJoinBroadcaster.onclick = async function () {
   }
 
 	while(true){
+		for(let i = 0; i < 2000; i++)
+			drawPyramid()
+			await sleep(1000/25)
 		updatePose()
-		await sleep(1000)
-		drawPyramid()
-		sendPyramid()
 	}
+
 
 
 };
 
-
-async function sendPyramid(){
-	let im = document.getElementById(imageCanvas)
-	socket.emit("update_pyramid", im.toDataURL())
-}
 
 //btnpose.onclick = async function(){estimate(await net)}
 
@@ -64,7 +60,7 @@ btnJoinViewer.onclick = function () {
 	
 	videoElement.style = "display: none;"
 	let lvideo = addVideo(videoCanvas)
- 	addImg(pyramidCanvas);
+ 	//addCanvas(imageCanvas);
 
 	navigator.mediaDevices
 		.getUserMedia(streamConstraints)
@@ -103,12 +99,10 @@ socket.on("new viewer", function (viewer) {
     stream =  videoElememt.captureStream();
 	} else if (videoElement.mozCaptureStream) {
     stream = videoElement.mozCaptureStream();
-
-
 	} else {
     console.log('captureStream() not supported');
 	}
-//  g_viewer = viewer
+  g_viewer = viewer
   stream
     .getTracks()
     .forEach((track) => rtcPeerConnections[viewer.id].addTrack(track, stream));
@@ -122,6 +116,7 @@ socket.on("new viewer", function (viewer) {
         id: event.candidate.sdpMid,
         candidate: event.candidate.candidate,
       });
+		console.log()
     }
   };
 	
@@ -180,9 +175,8 @@ socket.on("offer", function (broadcaster, sdp) {
     });
 
   rtcPeerConnections[broadcaster.id].ontrack = (event) => {
-    videoElement.srcObject = event.streams[0]
-  	 pyramidElement.srcObject = event.streams[1]
-	};
+    videoElement.srcObject = event.streams[0];
+  };
 
   rtcPeerConnections[broadcaster.id].onicecandidate = (event) => {
     if (event.candidate) {
@@ -203,18 +197,13 @@ socket.on("answer", function (viewerId, event) {
   );
 });
 
+socket.on("update_score", function(user){
+});
 
-socket.on("update_pyramid", function(img){	
-	console.log(img)
-	let im = document.getElementById(pyramidCanvas)
-	im.src = img
-	
-})
-
-socket.on("update_image", function(img){
-		//var newImg = document.createElement("img"); // create img tag
-      //newImg.src = imgBlob;
-      //document.body.appendChild(newImg);	
+socket.on("update_image", function(user, imgBlob){
+		var newImg = document.createElement("img"); // create img tag
+      newImg.src = imgBlob;
+      document.body.appendChild(newImg);	
 	   //can.getContext('2d').drawImage(imgBlob, 0, 0, w, h);  
 });
 
@@ -223,6 +212,13 @@ socket.on("get_update", function(pose){
 });
 
 
+function addImg(name, img){
+	var newImg = document.createElement('img')
+	name = name;                  
+	newImg.id = name 
+	newImg.src = img             
+	document.body.appendChild(newImg);
+}
 
 socket.on("update_user", function(usr){
 	let im = document.getElementById(usr.name)

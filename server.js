@@ -52,19 +52,23 @@ io.on("connection", function (socket) {
 		socket.to(broadcasters[user.room]).emit("update_score", user)
 	});
 
-	socket.on("update_image", function(user, imgBlob) {
-		socket.to(broadcasters[user.room]).emit("update_image", user, imgBlob)
+	socket.on("update_pyramid", function(img) {
+		users.forEach((id) => {
+			socket.to(id).emit("update_pyramid", img)
+		})
 	});
 
 	socket.on("update_user_data", function(user){
 		socket.to(broadcasters[user.room]).emit("update_user", user)
 	})
 
-	socket.on("get_update", function(pose, user){
+	socket.on("get_update", function(pose){
 		users.forEach((id) => {
 	   	socket.to(id).emit("get_update", pose)
 		})
 	});
+
+	
 
 });
 
