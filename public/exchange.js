@@ -1,8 +1,8 @@
 
 /////////////////////////SHARED
 
-
-
+btnStart = document.getElementById('start') 
+btnResult = document.getElementById('result')
 /////////////////////////HOST
 
 btnJoinBroadcaster.onclick = async function () {
@@ -19,20 +19,20 @@ btnJoinBroadcaster.onclick = async function () {
     divConsultingRoom.style = "display: block;";
 	 console.log(user.name + " is broadcasting")
 	 
-
 	 socket.emit("register as broadcaster", user.room);
   }
 
+};
+
+
+btnStart.onclick = async function(){
 	while(true){
 		updatePose()
 		await sleep(1000)
 		drawPyramid()
 		sendPyramid()
 	}
-
-
-};
-
+}
 
 async function sendPyramid(){
 	let im = document.getElementById(imageCanvas)
@@ -42,9 +42,6 @@ async function sendPyramid(){
 //btnpose.onclick = async function(){estimate(await net)}
 
 /////////////////////////CLIENT
-
-
-
 
 
 btnJoinViewer.onclick = function () {
@@ -57,12 +54,19 @@ btnJoinViewer.onclick = function () {
       name: inputName.value,
    };
 
-   divSelectRoom.style = "display: none;";
+	let dontShow = 'display: none;'
+   divSelectRoom.style = dontShow;
    divConsultingRoom.style = "display: block;";
 
+	document.getElementById(imageCanvas).style = dontShow
+	btnStart.style = dontShow
+	btnResult.style = dontShow
    socket.emit("register as viewer", user);
 	
-	videoElement.style = "display: none;"
+	//videoElement.style = "display: none;"
+		
+	videoElement.removeAttribute("controls")
+
 	let lvideo = addVideo(videoCanvas)
  	addImg(pyramidCanvas);
 
@@ -181,7 +185,6 @@ socket.on("offer", function (broadcaster, sdp) {
 
   rtcPeerConnections[broadcaster.id].ontrack = (event) => {
     videoElement.srcObject = event.streams[0]
-  	 pyramidElement.srcObject = event.streams[1]
 	};
 
   rtcPeerConnections[broadcaster.id].onicecandidate = (event) => {
@@ -205,18 +208,14 @@ socket.on("answer", function (viewerId, event) {
 
 
 socket.on("update_pyramid", function(img){	
-	console.log(img)
 	let im = document.getElementById(pyramidCanvas)
 	im.src = img
 	
+	if (videoElement.paused) {
+ 		videoElement.play(); 
+	}
+		
 })
-
-socket.on("update_image", function(img){
-		//var newImg = document.createElement("img"); // create img tag
-      //newImg.src = imgBlob;
-      //document.body.appendChild(newImg);	
-	   //can.getContext('2d').drawImage(imgBlob, 0, 0, w, h);  
-});
 
 socket.on("get_update", function(pose){
 	estimate(pose )
@@ -233,6 +232,7 @@ socket.on("update_user", function(usr){
 		im.src = usr.img
 
 	usr.src = document.getElementById(usr.name)
+	usr.src.style = 'display: none;'
 	user_list = user_list.filter(e => (e.name != usr.name))
 	user_list.push(usr)
 	user_list = user_list.sort((a,b) => ( a.score > b.score) ? 1 : -1)

@@ -25,13 +25,18 @@
 
 
 	<div id="consultingRoom" style="display:none">
+		<div id="pyramid">
+			<canvas id="imageCanvas" width=640 height=480></canvas>
+		</div>
+
 		<video id="leftVideo" controls autoplay >
         <source src="video/evol.mp4" type="video/mp4"/>
         <p>This browser does not support the video element.</p>
 		</video>
-		<p id="broadcasterName"></p>
-        <ul id="viewers"></ul>
-        <button id="pose">Pose</button>
+		<p id="broadcasterName" style="display: none;"></p>
+		<button id='start'>Start</button>
+		<button id='result'>Save Results</button>
+
     </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>

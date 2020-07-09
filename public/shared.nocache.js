@@ -1,5 +1,6 @@
 const divSelectRoom = document.getElementById("selectRoom");
 const divConsultingRoom = document.getElementById("consultingRoom");
+const divPyramid = document.getElementById("pyramid");
 const inputName = document.getElementById("name");
 const inputRoomNumber = document.getElementById("roomNumber");
 const btnJoinBroadcaster = document.getElementById("joinBroadcaster");
@@ -7,7 +8,6 @@ const btnJoinViewer = document.getElementById("joinViewer");
 const videoElement = document.querySelector("video");
 const broadcasterName = document.getElementById("broadcasterName");
 const viewers = document.getElementById("viewers");
-const btnpose = document.getElementById("pose");
 
 const video_w = 640;
 const video_h = 480;
@@ -36,13 +36,22 @@ function addCanvas(name){
 	divConsultingRoom.appendChild(canvas);
 }
 
+function addButton(name){
+	let btn = document.createElement("button")
+	btn.id = name
+	btn.style = "height:30px; width: 60px;"
+	btn.innerHTML = name
+	divConsultingRoom.appendChild(btn)
+	return document.getElementById(name)
+}
+
 function addVideo(name){
 	let lvideo = document.createElement("video");
 	lvideo.autoplay = true;
 	lvideo.width = video_w;
 	lvideo.height = video_h;
 	lvideo.id = name;
-	divConsultingRoom.appendChild(lvideo);
+	divPyramid.appendChild(lvideo);
 	return document.getElementById(name)
 }
 
@@ -51,13 +60,13 @@ function addImg(name, img){
 	name = name;                  
 	newImg.id = name 
 	newImg.src = img             
-	document.body.appendChild(newImg);
+	divConsultingRoom.appendChild(newImg);
 }
+
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
 
 ////////////////////////////////// POSENET
 
@@ -224,5 +233,4 @@ function getAngle(p1,p2) {
 
 ///////////////////////////////////////END POSENET
 
-addCanvas(imageCanvas)
 
