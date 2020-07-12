@@ -51,7 +51,7 @@ function addVideo(name){
 	lvideo.width = video_w;
 	lvideo.height = video_h;
 	lvideo.id = name;
-	divPyramid.appendChild(lvideo);
+	divConsultingRoom.appendChild(lvideo);
 	return document.getElementById(name)
 }
 
@@ -60,7 +60,7 @@ function addImg(name, img){
 	name = name;                  
 	newImg.id = name 
 	newImg.src = img             
-	divConsultingRoom.appendChild(newImg);
+	divPyramid.appendChild(newImg);
 }
 
 

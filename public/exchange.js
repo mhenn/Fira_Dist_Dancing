@@ -63,6 +63,8 @@ btnJoinViewer.onclick = function () {
 	btnResult.style = dontShow
    socket.emit("register as viewer", user);
 	
+
+	document.getElementById('header-container').remove()	
 	//videoElement.style = "display: none;"
 		
 	videoElement.removeAttribute("controls")
