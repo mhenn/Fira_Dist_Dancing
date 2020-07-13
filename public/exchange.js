@@ -16,7 +16,7 @@ btnJoinBroadcaster.onclick = async function () {
     };
 	 bUser = user
     divSelectRoom.style = "display: none;";
-    divConsultingRoom.style = "display: block;";
+    divConsultingRoom.style = "display: flex;";
 	 console.log(user.name + " is broadcasting")
 	 
 	 socket.emit("register as broadcaster", user.room);
@@ -56,7 +56,7 @@ btnJoinViewer.onclick = function () {
 
 	let dontShow = 'display: none;'
    divSelectRoom.style = dontShow;
-   divConsultingRoom.style = "display: block;";
+   divConsultingRoom.style = "display: flex;";
 
 	document.getElementById(imageCanvas).style = dontShow
 	btnStart.style = dontShow

@@ -76,6 +76,6 @@ io.on("connection", function (socket) {
 
 
 // listener
-http.listen(port || 3000, function () {
+http.listen(port || 3000, '0.0.0.0', function () {
   console.log("listening on", port);
 });
