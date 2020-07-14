@@ -163,7 +163,8 @@ function drawSkeletonOnCanvas(canvas, video, poses){
 }
  
 async function estimate( external_pose) {
-	net = await net	
+	if (net instanceof Promise)	
+		net = await net	
 	var flipHorizontal = false;
 	var video = document.getElementById(videoCanvas);
 	var canvas = document.getElementById(imageCanvas)
@@ -196,6 +197,7 @@ async function estimate( external_pose) {
 	let img = document.getElementById(imageCanvas)
 	let url = img.toDataURL();
 	user.img = url
+	//net.dispose()
 	socket.emit("update_user_data", user)	
 }
 

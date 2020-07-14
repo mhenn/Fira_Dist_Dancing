@@ -231,13 +231,14 @@ socket.on("update_user", function(usr){
 	if(!im)
 		addImg(usr.name,usr.img)
 	else
-		im.src = usr.img
-
+		im.src = usr.img + '?' + Date.now();
+	
 	usr.src = document.getElementById(usr.name)
 	usr.src.style = 'display: none;'
 	user_list = user_list.filter(e => (e.name != usr.name))
 	user_list.push(usr)
 	user_list = user_list.sort((a,b) => ( a.score > b.score) ? 1 : -1)
+	delete usr
 
 //	drawPyramid()	
 
