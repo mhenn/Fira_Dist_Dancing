@@ -1,6 +1,30 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
 
+.avatar {
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 1em;
+}
+
+.table{
+   margin-top: 20px;
+	border-collapse: collapse;
+}
+
+.table thead{
+  background:#111;
+  color:#fff;
+}
+
+.table tr th,.table tr td:nth-child(odd){
+	text-align:center;
+}
+
+
+
 html{
  background: #000 !important;
   background-image: linear-gradient(to bottom, #6A0275 10%, #040C4A 60%) !important;
@@ -58,17 +82,23 @@ button:active {
 }
 
 #title{
-font-family: "Permanent Marker", cursive;
-font-variant: small-caps;
-font-size: 4rem;
-transform: skew(-15deg, -4deg);
-background-image: -webkit-linear-gradient(rgb(255, 15, 248) 0%, rgb(249, 249, 247) 100%);
-background-clip: text;
--webkit-text-fill-color: transparent;
-filter: drop-shadow(rgb(240, 8, 183) 2px 2px 20px);
-margin-bottom: 1.3em;
---darkreader-inline-bgimage: -webkit-linear-gradient(#f300ec 0%, #e4e1da 100%);
 
+	font-family: "Permanent Marker", cursive;
+	font-variant: small-caps;
+	font-size: 4rem;
+	-webkit-transform: skew(-15deg,-4deg);
+	-moz-transform: skew(-15deg,-4deg);
+	transform: skew(-15deg, -4deg);
+	background-image: -webkit-linear-gradient(rgb(255, 15, 248) 0%, rgb(249, 249, 247) 100%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	-moz-text-fill-color: transparent;
+	filter: drop-shadow(rgb(240, 8, 183) 2px 2px 20px);
+	-moz-filter: drop-shadow(2px 2px 20px #f008b7);
+	-webkit-filter: drop-shadow(2px 2px 20px #f008b7);
+	margin-bottom: 1.3em;
+	--darkreader-inline-bgimage: -webkit-linear-gradient(#f300ec 0%, #e4e1da 100%);
 }
 
 

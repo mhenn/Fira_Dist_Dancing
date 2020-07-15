@@ -1,8 +1,12 @@
 
 /////////////////////////SHARED
-
+var running = true
 btnStart = document.getElementById('start') 
+btnStop = document.getElementById('stop') 
 btnResult = document.getElementById('result')
+
+
+
 /////////////////////////HOST
 
 btnJoinBroadcaster.onclick = async function () {
@@ -14,7 +18,13 @@ btnJoinBroadcaster.onclick = async function () {
       name: inputName.value,
 		score: 0,
     };
-	 bUser = user
+
+	
+	let lVid = document.getElementById('leftVideo')
+	let source = document.createElement('source') 
+	source.type= "video/mp4"
+	source.src = 'video/evol.mp4'
+	lVid.appendChild(source)
     divSelectRoom.style = "display: none;";
     divConsultingRoom.style = "display: flex;";
 	 console.log(user.name + " is broadcasting")
@@ -25,13 +35,25 @@ btnJoinBroadcaster.onclick = async function () {
 };
 
 
+btnResult.onclick = async function(){
+
+	socket.emit('save', user_list, user.room)
+
+}
+
 btnStart.onclick = async function(){
-	while(true){
+	running = true
+	while(running){
+		console.log('asd')
 		updatePose()
 		await sleep(1000)
-		drawPyramid()
-		sendPyramid()
+//		drawPyramid()
+//		sendPyramid()
 	}
+}
+
+btnStop.onclick = async function(){
+	running = false
 }
 
 async function sendPyramid(){
@@ -45,7 +67,8 @@ async function sendPyramid(){
 
 
 btnJoinViewer.onclick = function () {
-   
+  
+ 
    if (inputRoomNumber.value === "" || inputName.value === "") {
     alert("Please type a room number and a name");
    } else {
@@ -58,9 +81,10 @@ btnJoinViewer.onclick = function () {
    divSelectRoom.style = dontShow;
    divConsultingRoom.style = "display: flex;";
 
-	document.getElementById(imageCanvas).style = dontShow
+//	document.getElementById(imageCanvas).style = dontShow
 	btnStart.style = dontShow
 	btnResult.style = dontShow
+	btnStop.style = dontShow
    socket.emit("register as viewer", user);
 	
 
@@ -70,11 +94,11 @@ btnJoinViewer.onclick = function () {
 	videoElement.removeAttribute("controls")
 
 	let lvideo = addVideo(videoCanvas)
- 	addImg(pyramidCanvas);
+// 	addImg(pyramidCanvas);
 
 	navigator.mediaDevices
 		.getUserMedia(streamConstraints)
-		.then(function (stream) {
+		.then(async function (stream) {
 			lvideo.srcObject = stream;
 		})
 	.catch(function (err) {
@@ -106,7 +130,7 @@ socket.on("new viewer", function (viewer) {
 	
 	let stream = null
 	if (videoElement.captureStream) {
-    stream =  videoElememt.captureStream();
+    stream =  videoElement.captureStream();
 	} else if (videoElement.mozCaptureStream) {
     stream = videoElement.mozCaptureStream();
 
@@ -118,6 +142,8 @@ socket.on("new viewer", function (viewer) {
   stream
     .getTracks()
     .forEach((track) => rtcPeerConnections[viewer.id].addTrack(track, stream));
+
+	console.log(stream)
 
   rtcPeerConnections[viewer.id].onicecandidate = (event) => {
     if (event.candidate) {
@@ -186,6 +212,7 @@ socket.on("offer", function (broadcaster, sdp) {
     });
 
   rtcPeerConnections[broadcaster.id].ontrack = (event) => {
+	 console.log('asd')
     videoElement.srcObject = event.streams[0]
 	};
 
@@ -224,22 +251,25 @@ socket.on("get_update", function(pose){
 });
 
 
+socket.on("update_scoreboard", (ul) =>{
+	update_scoreboard(ul)
+})
 
 socket.on("update_user", function(usr){
-	let im = document.getElementById(usr.name)
+//	let im = document.getElementById(usr.name)
 	
-	if(!im)
-		addImg(usr.name,usr.img)
-	else
-		im.src = usr.img + '?' + Date.now();
-	
-	usr.src = document.getElementById(usr.name)
-	usr.src.style = 'display: none;'
+//	if(!im)
+//		addImg(usr.name,usr.img)
+//	else
+//		im.src = usr.img ;
+//	console.log(usr)	
+//	usr.src = document.getElementById(usr.name)
+//	usr.src.style = 'display: none;'
 	user_list = user_list.filter(e => (e.name != usr.name))
 	user_list.push(usr)
 	user_list = user_list.sort((a,b) => ( a.score > b.score) ? 1 : -1)
-	delete usr
-
+	socket.emit("update_scoreboard", user_list)
+	//update_scoreboard()
 //	drawPyramid()	
 
 });

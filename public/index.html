@@ -25,25 +25,42 @@
 
 
 	<div id="consultingRoom" style="display:none">
+
+<div class="container">
+  <table id="scoreboard" class="table">
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Username</th>
+      <th>Score</th>
+    </tr>
+  </thead>
+  <tbody id="tb">
+  </tbody>
+</table>
+</div>
+	
+
+<!--
+
 		<div id="pyramid">
 		
 			<canvas id="imageCanvas" width=640 height=480></canvas>
 		</div>
-
-		<video id="leftVideo" controls autoplay width=640 height=480 >
-        <source src="video/evol.mp4" type="video/mp4"/>
+-->		<video id="leftVideo" controls autoplay width=640 height=480 >
         <p>This browser does not support the video element.</p>
 		</video>
 		<p id="broadcasterName" style="display: none;"></p>
 		<button id='start'>Start</button>
+		<button id='stop'>Stop</button>
 		<button id='result'>Save Results</button>
-
     </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
 	<script src="/socket.io/socket.io.js"></script>
-	<script src="https://docs.opencv.org/4.2.0/opencv.js"></script>
+<!--	<script src="https://docs.opencv.org/4.2.0/opencv.js"></script>	
+--><script src="scoreboard.js"></script>
 	<script src="shared.nocache.js"></script>
 	<script src="client.js"></script>
 	<script src="exchange.js"></script>

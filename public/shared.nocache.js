@@ -5,7 +5,7 @@ const inputName = document.getElementById("name");
 const inputRoomNumber = document.getElementById("roomNumber");
 const btnJoinBroadcaster = document.getElementById("joinBroadcaster");
 const btnJoinViewer = document.getElementById("joinViewer");
-const videoElement = document.querySelector("video");
+const videoElement = document.getElementById("leftVideo");
 const broadcasterName = document.getElementById("broadcasterName");
 const viewers = document.getElementById("viewers");
 
@@ -20,7 +20,7 @@ const videoCanvas = 'videoCanvas'
 const imageCanvas = 'imageCanvas'
 const pyramidCanvas = 'pyramidCanvas'	
 
-var list 
+var user_list = [] 
 
 
 const combinations = new Map([["shoulders",[5,6]],["left_arm",[5,7]],["right_arm",[6,8]],["left_forearm",[7,9]],["right_forearm",[8,10]],["hip",[11,12]],["left_u_leg", [11,13]],["right_u_leg",[12,14]],["left_l_leg",[13,15]],["right_l_leg",[14,16]]])
@@ -140,6 +140,7 @@ function connection_exists(p1,p2){
 }
 
 
+
 async function getSkeleton(img, net){
 
 	var poses = await net.estimateSinglePose(img, {
@@ -156,22 +157,13 @@ function drawSkeletonOnCanvas(canvas, video, poses){
 	//canvas.style = 'display: none;'
 	var ctx = canvas.getContext('2d')
 	ctx.drawImage(video, 0,0, w,h)
-	var initial = cv.imread(imageCanvas)
+//	var initial = cv.imread(imageCanvas)
 	drawKeypoints(poses.keypoints, detect_thresh, ctx);
 	drawSkeleton(poses.keypoints, detect_thresh, ctx);
-	return initial
 }
- 
-async function estimate( external_pose) {
-	if (net instanceof Promise)	
-		net = await net	
-	var flipHorizontal = false;
-	var video = document.getElementById(videoCanvas);
-	var canvas = document.getElementById(imageCanvas)
-	poses = await getSkeleton(video, net)
 
-	let initial = drawSkeletonOnCanvas(canvas, video,poses) 	
-	
+
+function calculate_score(poses, external_pose){
 	let score = 0
 	combinations.forEach(([a,b], key) => {
 		p1 = poses.keypoints[a]
@@ -188,17 +180,38 @@ async function estimate( external_pose) {
 			}
 		}
 	});
-	drawCutout(initial)	
+
+	return score
+
+}
+
+ 
+async function estimate( external_pose) {
+	if (net instanceof Promise)	
+		net = await net	
 	
+	var flipHorizontal = false;
+	var video = document.getElementById(videoCanvas);
+	poses = await getSkeleton(video, net)
+
+
+	if (! external_pose){	
+		//var canvas = document.getElementById(imageCanvas)
+		var canvas = document.getElementById('blyat')
+		drawSkeletonOnCanvas(canvas, video,poses) 	
+		estimate()
+	}
+
+	let score = calculate_score(poses, external_pose)
 	if(!user.score)
 		user.score = 0
-	user.score = user.score + (score / 100)	
-	
-	let img = document.getElementById(imageCanvas)
-	let url = img.toDataURL();
-	user.img = url
-	//net.dispose()
+	user.score = user.score + (score / 100)		
 	socket.emit("update_user_data", user)	
+//	drawCutout(initial)		
+//	let img = document.getElementById(imageCanvas)
+//	let url = img.toDataURL();
+//	user.img = url
+	//net.dispose()
 }
 
 

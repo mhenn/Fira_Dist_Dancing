@@ -67,8 +67,30 @@ io.on("connection", function (socket) {
 	   	socket.to(id).emit("get_update", pose)
 		})
 	});
+	socket.on("save", function(list, id){
 
+	//list.forEach((e) => { delete e.img})
+
+	require('fs').writeFile(
+
+    './results' + id + '.json',
+
+    JSON.stringify(list),
+
+    function (err) {
+        if (err) {
+            console.error('Crap happens');
+        }
+    }
+);
+	});
 	
+	socket.on("update_scoreboard", function(user_list){
+			users.forEach((id) => {
+				socket.to(id).emit("update_scoreboard", user_list)
+		})
+
+	}) 
 
 });
 
