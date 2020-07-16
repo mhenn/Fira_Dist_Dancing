@@ -34,10 +34,9 @@ function create_row(id,name,score, parent_el){
 function update_scoreboard(ul){
 
 	cleanup_table()
-
 	var  tb = document.getElementById('tb')
 		
 	ul.forEach((e,i) =>{
-		create_row(i, e.name, e.score, tb)	
+		create_row(i+1, e.name, e.score, tb)	
 	})
 }

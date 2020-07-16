@@ -3,7 +3,7 @@ let rtcPeerConnections = {};
 let g_viewer = null;
 
 const color = '#EE00FF'
-const lineWidth = 80;
+const lineWidth = 2;
 const detect_thresh = 0.5
 // constants
 

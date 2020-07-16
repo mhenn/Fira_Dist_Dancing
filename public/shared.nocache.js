@@ -107,12 +107,11 @@ function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
     if (keypoint.score < minConfidence) {
       continue;
     }
-
     let {y, x} = keypoint.position;
 	 if(keypoint.part == "nose")
-   	 drawPoint(ctx, y * scale, x * scale, 100, color);
+   	 drawPoint(ctx, y * scale, x * scale, 3, color);
 	 else
-   	 drawPoint(ctx, y * scale, x * scale, 30, color);	
+   	 drawPoint(ctx, y * scale, x * scale, 3, color);	
   }
 }
 
@@ -121,7 +120,8 @@ async function getNet(){
 	let net = await posenet.load({
 	  architecture: 'MobileNetV1',
 	  outputStride: 16,
-	  inputResolution: { width: 640, height: 480 },
+	  //inputResolution: { width: 640, height: 480 },
+	  inputResolution: 250,
 	  multiplier: 0.75
 	}).then();
 
@@ -187,6 +187,8 @@ function calculate_score(poses, external_pose){
 
  
 async function estimate( external_pose) {
+	
+
 	if (net instanceof Promise)	
 		net = await net	
 	
@@ -194,19 +196,20 @@ async function estimate( external_pose) {
 	var video = document.getElementById(videoCanvas);
 	poses = await getSkeleton(video, net)
 
-
+	
 	if (! external_pose){	
 		//var canvas = document.getElementById(imageCanvas)
 		var canvas = document.getElementById('blyat')
 		drawSkeletonOnCanvas(canvas, video,poses) 	
 		estimate()
-	}
+	} else{
 
-	let score = calculate_score(poses, external_pose)
-	if(!user.score)
-		user.score = 0
-	user.score = user.score + (score / 100)		
-	socket.emit("update_user_data", user)	
+		let score = calculate_score(poses, external_pose)
+		if(!user.score)
+			user.score = 0
+		user.score = user.score + (score / 100)		
+		socket.emit("update_user_data", user)	
+	}
 //	drawCutout(initial)		
 //	let img = document.getElementById(imageCanvas)
 //	let url = img.toDataURL();

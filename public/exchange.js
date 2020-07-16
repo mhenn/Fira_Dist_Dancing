@@ -31,14 +31,12 @@ btnJoinBroadcaster.onclick = async function () {
 	 
 	 socket.emit("register as broadcaster", user.room);
   }
-
 };
 
 
 btnResult.onclick = async function(){
 
 	socket.emit('save', user_list, user.room)
-
 }
 
 btnStart.onclick = async function(){
@@ -65,6 +63,33 @@ async function sendPyramid(){
 
 /////////////////////////CLIENT
 
+function setDisplay(){
+	
+	let div = document.getElementById('user-display')
+	let p_name = document.createElement('p')
+	let p_score = document.createElement('p')
+	div.style = "display:flex;"
+	p_name.id = "user_name"
+	p_score.id = "user_score"
+
+	p_name.innerHTML = "User: " + inputName.value
+	p_score.innerHTML = "Score: 0"
+
+	div.appendChild(p_name)
+	div.appendChild(p_score)
+
+}
+
+function update_p(user){
+
+	let p_name = document.getElementById('user_name')
+	let p_score = document.getElementById('user_score')
+
+	p_score.innerHTML = "Score: " + user.score
+
+	
+}
+
 
 btnJoinViewer.onclick = function () {
   
@@ -81,6 +106,9 @@ btnJoinViewer.onclick = function () {
    divSelectRoom.style = dontShow;
    divConsultingRoom.style = "display: flex;";
 
+
+	setDisplay(user)
+
 //	document.getElementById(imageCanvas).style = dontShow
 	btnStart.style = dontShow
 	btnResult.style = dontShow
@@ -94,6 +122,7 @@ btnJoinViewer.onclick = function () {
 	videoElement.removeAttribute("controls")
 
 	let lvideo = addVideo(videoCanvas)
+	lvideo.style = "display: none;"
 // 	addImg(pyramidCanvas);
 
 	navigator.mediaDevices
@@ -211,9 +240,11 @@ socket.on("offer", function (broadcaster, sdp) {
       });
     });
 
-  rtcPeerConnections[broadcaster.id].ontrack = (event) => {
+  rtcPeerConnections[broadcaster.id].ontrack = async function(event) {
 	 console.log('asd')
     videoElement.srcObject = event.streams[0]
+		await sleep(2000)
+		estimate()	
 	};
 
   rtcPeerConnections[broadcaster.id].onicecandidate = (event) => {
@@ -253,6 +284,7 @@ socket.on("get_update", function(pose){
 
 socket.on("update_scoreboard", (ul) =>{
 	update_scoreboard(ul)
+	update_p(user)
 })
 
 socket.on("update_user", function(usr){

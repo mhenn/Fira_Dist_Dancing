@@ -1,29 +1,118 @@
 @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
 
+:root {
+  
+  /* Set neon color */
+  --neon-text-color: #f40;
+  --neon-border-color: #08f;
+}
+button {
+  font-family: 'Permanent Marker', sans-serif;
+  background-color: transparent;
+  font-size: 1rem;
+  margin-top: 1em;
+  font-variant: small-caps;
+  font-weight: 200;
+  font-style: italic;
+  color: #fff;
+  padding: 1rem 1.5rem 1rem;
+  border: 0.4rem solid #fff;
+  border-radius: 2rem;
+  text-transform: uppercase;
+  animation: flicker 3s infinite alternate;     
+}
 
-.avatar {
-  vertical-align: middle;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 1em;
+#form{
+display: flex;
+flex-direction: column;
+justify-content: center;
+width: 15vw;
+
+}
+
+
+button::-moz-selection {
+  background-color: var(--neon-border-color);
+  color: var(--neon-text-color);
+}
+
+button::selection {
+  background-color: var(--neon-border-color);
+  color: var(--neon-text-color);
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Animate neon flicker */
+@keyframes flicker {
+    
+    100% {
+        
+        filter: drop-shadow(rgb(240, 8, 183) 2px 2px 20px);
+        box-shadow:
+            0 0 .5rem #fff,
+            inset 0 0 .5rem #fff,
+            0 0 .2rem var(--neon-border-color),
+            inset 0 0 2rem var(--neon-border-color),
+            0 0 .4rem var(--neon-border-color),
+            inset 0 0 .4rem var(--neon-border-color);        
+    }
+    
+   
+}
+
+
+
+#flexing{
+	display:flex;
+	justify-content:flex-end;
+}
+
+#user-display{
+	display: flex;
+	width: 30em;
+	justify-content: space-around;
+	font-family: "Permanent Marker", cursive;
+	font-variant: small-caps;
+	font-size: 1.3rem;
+	color: white;
 }
 
 .table{
    margin-top: 20px;
 	border-collapse: collapse;
+	font-family: "Permanent Marker", cursive;
+	font-variant: small-caps;
+	font-size: 1.3rem;
+	color:white;
+}
+
+label{
+	font-family: "Permanent Marker", cursive;
+	font-variant: small-caps;
+	font-size: 1.3rem;
+	color: white;
 }
 
 .table thead{
   background:#111;
   color:#fff;
+
 }
 
 .table tr th,.table tr td:nth-child(odd){
 	text-align:center;
+	width: 5em;
 }
 
-
+video {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+	width: 640px;
+	height:480px;
+}
 
 html{
  background: #000 !important;
@@ -42,34 +131,20 @@ html{
 	display: flex ;
 	justify-content: space-around;
 	flex-wrap: wrap;	
+	flex-direction: column-reverse;
 }
 
-button {
-	box-shadow:inset 0px 5px 5px 0px #91b8b3;
-	background:linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
-	background-color:#768d87;
-	border-radius:5px;
-	border:1px solid #566963;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	padding:5px 7px;
-	text-decoration:none;
-	height: 2em;
+.container{
+	display:flex;
+	justify-content:center;
 }
 
-button:hover {
-	background:linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
-	background-color:#6c7c7c;
-}
-button:active {
-	position:relative;
-	top:1px;
-}
+#video-container{
 
+	display:flex;
+	justify-content: space-around;
+
+}
 
 #header-container{
 	overflow: hidden;

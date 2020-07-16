@@ -3,10 +3,12 @@
 <head>
     <title>FIRA Dis Dancing Competition</title>
 	 <link rel="stylesheet" href="index.nocache.css" >
-
 </head>
 
 <body>
+	<div id="flexing">
+		<div id="user-display" ></div>
+	</div>
 	<div id="header-container">
 		<div	id="stars2"></div>
 		<div	id="stars3"></div>
@@ -14,18 +16,20 @@
     <h1 id="title">FIRA Dist Dancing Competition</h1>
 	</div>
 	</div>
-    <div id="selectRoom">
+	<div id="selectRoom" class="container">
+		<div id="form" ">
         <label for="name">Type your Name</label>
         <input id="name" type="text" />
         <label for="roomNumber">Type the room number</label>
         <input id="roomNumber" type="text" />
         <button id="joinBroadcaster">Join as Broadcaster</button>
         <button id="joinViewer">Join as Viewer</button>
+		 </div>
     </div>
 
 
 	<div id="consultingRoom" style="display:none">
-
+	
 <div class="container">
   <table id="scoreboard" class="table">
   <thead>
@@ -47,9 +51,13 @@
 		
 			<canvas id="imageCanvas" width=640 height=480></canvas>
 		</div>
--->		<video id="leftVideo" controls autoplay width=640 height=480 >
-        <p>This browser does not support the video element.</p>
-		</video>
+-->		
+			<div id="video-container">
+			<video id="leftVideo" controls autoplay width=640 height=480 >
+        		<p>This browser does not support the video element.</p>
+			</video>
+			<canvas id="blyat" width=640 height=480></canvas>
+		</div>
 		<p id="broadcasterName" style="display: none;"></p>
 		<button id='start'>Start</button>
 		<button id='stop'>Stop</button>
