@@ -19,11 +19,14 @@ btnJoinBroadcaster.onclick = async function () {
 		score: 0,
     };
 
+	document.getElementById('blyat').remove()
+	document.getElementById('scoreboard').remove()
 	
 	let lVid = document.getElementById('leftVideo')
 	let source = document.createElement('source') 
 	source.type= "video/mp4"
 	source.src = 'video/evol.mp4'
+	source.id = 'srcc'
 	lVid.appendChild(source)
     divSelectRoom.style = "display: none;";
     divConsultingRoom.style = "display: flex;";
@@ -101,7 +104,7 @@ btnJoinViewer.onclick = function () {
       room: inputRoomNumber.value,
       name: inputName.value,
    };
-
+	selection.remove()
 	let dontShow = 'display: none;'
    divSelectRoom.style = dontShow;
    divConsultingRoom.style = "display: flex;";
@@ -213,6 +216,8 @@ socket.on("candidate", function (id, event) {
 });
 
 channels = []
+var asdf = 0
+
 
 function receivedData(event){
 	console.log(event)
@@ -245,7 +250,9 @@ socket.on("offer", function (broadcaster, sdp) {
     videoElement.srcObject = event.streams[0]
 		await sleep(2000)
 		estimate()	
+		asdf +=1
 	};
+
 
   rtcPeerConnections[broadcaster.id].onicecandidate = (event) => {
     if (event.candidate) {
@@ -299,7 +306,7 @@ socket.on("update_user", function(usr){
 //	usr.src.style = 'display: none;'
 	user_list = user_list.filter(e => (e.name != usr.name))
 	user_list.push(usr)
-	user_list = user_list.sort((a,b) => ( a.score > b.score) ? 1 : -1)
+	user_list = user_list.sort((a,b) => ( a.score < b.score) ? 1 : -1)
 	socket.emit("update_scoreboard", user_list)
 	//update_scoreboard()
 //	drawPyramid()	

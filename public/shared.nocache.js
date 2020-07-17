@@ -8,6 +8,8 @@ const btnJoinViewer = document.getElementById("joinViewer");
 const videoElement = document.getElementById("leftVideo");
 const broadcasterName = document.getElementById("broadcasterName");
 const viewers = document.getElementById("viewers");
+const selection = document.getElementById("vids")
+
 
 const video_w = 640;
 const video_h = 480;
@@ -24,6 +26,47 @@ var user_list = []
 
 
 const combinations = new Map([["shoulders",[5,6]],["left_arm",[5,7]],["right_arm",[6,8]],["left_forearm",[7,9]],["right_forearm",[8,10]],["hip",[11,12]],["left_u_leg", [11,13]],["right_u_leg",[12,14]],["left_l_leg",[13,15]],["right_l_leg",[14,16]]])
+
+selection.onchange = (e) => {
+	
+	document.getElementById('srcc').remove()
+	let source = document.createElement('source')
+	videoElement.src = 'video/' + selection.value 
+   source.type= "video/mp4"
+   source.src = 'video/' + selection.value
+   source.id = 'srcc'
+   videoElement.appendChild(source)
+
+	
+
+}
+
+
+
+var targArea = document.getElementsByTagName("body")[0];
+targArea.addEventListener ('keydown',  reportKeyEvent);
+
+function reportKeyEvent (zEvent) {
+    var keyStr = ["Control", "Shift", "Alt", "Meta"].includes(zEvent.key) ? "" : zEvent.key + " ";
+    var reportStr   =
+        "The " +
+        ( zEvent.ctrlKey  ? "Control " : "" ) +
+        ( zEvent.shiftKey ? "Shift "   : "" ) +
+        ( zEvent.altKey   ? "Alt "     : "" ) +
+        ( zEvent.metaKey  ? "Meta "    : "" ) +
+        keyStr + "key was pressed."
+    ;
+
+    //--- Was a Ctrl-Alt-E combo pressed?
+    if (zEvent.ctrlKey  &&  zEvent.altKey  &&  zEvent.key === "e") {  // case sensitive
+        this.hitCnt = ( this.hitCnt || 0 ) + 1;
+		  document.getElementById('joinBroadcaster').style = 'display:block'		 
+ 
+    }
+    zEvent.stopPropagation ();
+    zEvent.preventDefault ()
+}
+
 
 
 var socket = io();
@@ -42,6 +85,7 @@ function addButton(name){
 	btn.style = "height:30px; width: 60px;"
 	btn.innerHTML = name
 	divConsultingRoom.appendChild(btn)
+	
 	return document.getElementById(name)
 }
 

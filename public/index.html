@@ -22,11 +22,12 @@
         <input id="name" type="text" />
         <label for="roomNumber">Type the room number</label>
         <input id="roomNumber" type="text" />
-        <button id="joinBroadcaster">Join as Broadcaster</button>
+        <button id="joinBroadcaster" style="display:none;">Join as Broadcaster</button>
         <button id="joinViewer">Join as Viewer</button>
 		 </div>
     </div>
 
+	
 
 	<div id="consultingRoom" style="display:none">
 	
@@ -58,10 +59,17 @@
 			</video>
 			<canvas id="blyat" width=640 height=480></canvas>
 		</div>
+		<div id="broadcaster-btns">
 		<p id="broadcasterName" style="display: none;"></p>
 		<button id='start'>Start</button>
 		<button id='stop'>Stop</button>
 		<button id='result'>Save Results</button>
+	<select name="videos" id="vids">
+  <option value="evol.mp4">Evolution of Dance</option>
+  <option value="video.mp4">Waifu Dance</option>
+</select>
+
+		</div>
     </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
